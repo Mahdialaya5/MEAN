@@ -11,6 +11,6 @@ router.post('/login',loginCheck(),validator,userController.login)
 // get current user ==>private
 router.get("/current",isAuth(),userController.current)
 //getusers
-router.get("/userlist",userController.getuser)
+router.get("/userlist",isAuth(),userController.getuser)
 
 module.exports=router

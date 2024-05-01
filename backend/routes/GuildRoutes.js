@@ -6,7 +6,7 @@ const isAdmin=require('../middlewares/isAdmin')
 //add guild
 router.post("/",isAuth(), guildController.addguild)
 //get guilds 
-router.get('/',guildController.getguild)
+router.get('/',isAuth(),guildController.getguild)
 
 
 module.exports=router

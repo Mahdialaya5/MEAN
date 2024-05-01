@@ -6,7 +6,7 @@ const isAdmin=require('../middlewares/isAdmin')
 //add student
 router.post("/",isAuth(), studentController.addstudent)
 //get students
-router.get('/',studentController.getstudent)
+router.get('/',isAuth(),studentController.getstudent)
 
 
 module.exports=router

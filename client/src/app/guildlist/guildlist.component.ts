@@ -14,14 +14,17 @@ export class GuildlistComponent  implements OnInit {
 
   http=inject(HttpClient);
   data:any=[];
-   //token:any=localStorage.getItem("token")
+   token:any
 
   ngOnInit():void {
      this.getguilds()
   }
 
    getguilds(){
-      this.http.get("http://localhost:5000/api/guild").subscribe((data:any)=>{
+      this.token=localStorage.getItem('token')
+      this.http.get("http://localhost:5000/api/guild",
+      { headers:{ Authorization: `Bearer ${this.token}`}}
+      ).subscribe((data:any)=>{
         console.log(data)
       this.data=data})
    }
