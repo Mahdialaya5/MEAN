@@ -13,7 +13,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
 export class AddguildComponent implements OnInit {
   http=inject(HttpClient);
   res=[];
-  users=[]
+  users:any=[]
  token:string | null=''
   
   ngOnInit():void {
