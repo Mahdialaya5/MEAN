@@ -1,34 +1,45 @@
 import { NgIf } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
-
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink,NgIf,NavbarComponent],
+  imports: [RouterLink, NgIf, NavbarComponent],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrls: ['./login.component.css'] 
 })
 export class LoginComponent {
-  constructor(private router: Router) {}
-  http=inject(HttpClient);
-  res:any;
- error:any;
+  private http = inject(HttpClient); 
+  error: string | null = null;
 
-  login(email_user:any,password_user:any){
-    
-   this.http.post("http://localhost:5000/api/user/login",
-   {email:email_user,password:password_user}).subscribe((res:any)=>{
-      localStorage.setItem("token",res.token)
-        this.res=res})
-    if (localStorage.getItem("token")&& localStorage.getItem("token")) {
-      this.router.navigate(['/']);
-      console.log('object');
-    }
+  constructor(private router: Router) {}
+
+  login(email_user: string, password_user: string): void {
+    this.http.post<{ token: string }>("http://localhost:5000/api/user/login",{email:email_user,password:password_user})
+      .pipe(
+        catchError(this.handleError)
+      ).subscribe({
+        next: (response) => {
+          localStorage.setItem("token", response.token);
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          this.error = 'Bad credentials';
+          console.error( err);
+        }
+      });
+  }
+private handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+       console.error('An error occurred:',error) }
     else {
-      this.error='bad credential'
-    }}
+     console.error(`Backend returned code ${error.status}, body was: ${error.error}`);
+    }
+  return of()
+  }
 }

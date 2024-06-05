@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -12,9 +12,9 @@ import { NavbarComponent } from '../navbar/navbar.component';
 })
 export class AddguildComponent implements OnInit {
   http=inject(HttpClient);
-  res:any=[];
-  users:any=[]
- token:any
+  res=[];
+  users=[]
+ token:string | null=''
   
   ngOnInit():void {
     this.geusers()
@@ -24,19 +24,27 @@ export class AddguildComponent implements OnInit {
   this.token=localStorage.getItem('token')
   this.http.get("http://localhost:5000/api/user/userlist",
   { headers:{ Authorization: `Bearer ${this.token}`}}
-  ).subscribe((data:any)=>{
-    console.log(data)
-  this.users=data})
+  ).subscribe({
+    next: (response: any) => {
+      console.log(response);
+      this.users = response },
+    error: (error: HttpErrorResponse) => {
+      console.error(error);
+    }
+  })
  }
 
 add(newname:String,newformation:String,withInstuctor:String){
   this.token=localStorage.getItem('token')
   this.http.post("http://localhost:5000/api/guild",
   {name: newname,formation: newformation,instructor:withInstuctor},
-  { headers:{ Authorization: `Bearer ${this.token}`}}).subscribe(
-    (res:any)=>{
-    console.log(res)
-  this.res=res})
-
- }
-}
+  { headers:{ Authorization: `Bearer ${this.token}`}}).subscribe({
+    next: (response: any) => {
+      console.log(response);
+      this.res = response
+    },
+    error: (error: HttpErrorResponse)=>{
+      console.error(error);
+    }
+  })
+ }}

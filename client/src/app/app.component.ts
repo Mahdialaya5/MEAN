@@ -15,7 +15,7 @@ export class AppComponent implements OnInit{
   http=inject(HttpClient);
   current_user:any=[];
   token:any
-title="first-app"
+ title="first-app"
   ngOnInit():void {
      this.getcurrent()
   }

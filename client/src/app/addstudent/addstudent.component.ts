@@ -1,38 +1,58 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
 
+
 @Component({
   selector: 'app-addstudent',
   standalone: true,
-  imports: [RouterLink,NavbarComponent],
+  imports: [RouterLink, NavbarComponent],
   templateUrl: './addstudent.component.html',
-  styleUrl: './addstudent.component.css'
+  styleUrls: ['./addstudent.component.css'] 
 })
 export class AddstudentComponent implements OnInit {
-  http=inject(HttpClient);
-  res:any=[];
- data:any
- token:any
- ngOnInit():void {
-    this.getguilds()
- }
+  private http = inject(HttpClient); 
+  res: any = [];
+  data: any;
 
-getguilds(){
-     this.http.get("http://localhost:5000/api/guild").subscribe((data:any)=>{
-       console.log(data)
-     this.data=data})
+  ngOnInit(): void {
+    this.getGuilds();
+  }
+  private getGuilds(): void {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    this.http.get("http://localhost:5000/api/guild",{headers})
+    .subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.data = response },
+      error: (error: HttpErrorResponse) => {
+        console.error(error);
+      }
+    })
   }
 
-add(newemail:String,newname:String,newphone:any,inguild:any,newformation:any){
-  this.token=localStorage.getItem('token')
-    this.http.post("http://localhost:5000/api/student",
-   {email:newemail,name: newname,phone: newphone,formation: newformation,guild:inguild},
-   { headers:{ Authorization: `Bearer ${this.token}`}}).subscribe(
-    (res:any)=>{
-    console.log(res)
-  this.res=res})
- }
+  add(newEmail: string, newName: string, newPhone: string, inGuild: string, newFormation: string): void {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
 
+    this.http.post("http://localhost:5000/api/student",
+      { email: newEmail, name: newName, phone: newPhone, formation: newFormation, guild: inGuild },
+      { headers}
+    ).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.res = response },
+      error: (error: HttpErrorResponse) => {
+        console.error(error);
+      }
+    })
+  }
+
+  
 }
